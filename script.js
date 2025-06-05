@@ -132,6 +132,8 @@ function animateNumbers() {
     const numbers = document.querySelectorAll('.number');
     numbers.forEach(number => {
         const target = parseInt(number.getAttribute('data-target'));
+        if (isNaN(target)) return; // Skip if target is not a valid number
+        
         const duration = 2000; // 2 seconds
         const step = target / (duration / 16); // 60fps
         let current = 0;
@@ -160,6 +162,7 @@ const numberObserver = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.5 });
 
+// Observe all number elements
 document.querySelectorAll('.number').forEach(number => {
     numberObserver.observe(number);
 });
@@ -169,10 +172,13 @@ document.querySelectorAll('.dropdown').forEach(dropdown => {
     const button = dropdown.querySelector('.dropdown-button');
     const content = dropdown.querySelector('.dropdown-content');
     
-    button.addEventListener('click', (e) => {
-        e.stopPropagation();
-        content.style.display = content.style.display === 'block' ? 'none' : 'block';
-    });
+    if (button && content) {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        });
+    }
 });
 
 // Close dropdowns when clicking outside
