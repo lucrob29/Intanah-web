@@ -127,53 +127,61 @@ document.getElementById('backToTop').addEventListener('click', function() {
     });
 });
 
-// Number animation with Intersection Observer
+// Number animation
 function animateNumbers() {
-    const numberElements = document.querySelectorAll('.number');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const element = entry.target;
-            const targetValue = parseInt(element.getAttribute('data-value'));
-            const isPercentage = element.textContent.includes('%');
-            
-            if (entry.isIntersecting) {
-                // Reset the number to 0 when it comes into view
-                element.textContent = isPercentage ? '0%' : '0';
-                
-                let currentValue = 0;
-                const duration = 2000; // 2 seconds
-                const interval = 20; // Update every 20ms
-                const steps = duration / interval;
-                const increment = targetValue / steps;
-
-                const counter = setInterval(() => {
-                    currentValue += increment;
-                    if (currentValue >= targetValue) {
-                        currentValue = targetValue;
-                        clearInterval(counter);
-                    }
-                    element.textContent = isPercentage ? 
-                        Math.round(currentValue) + '%' : 
-                        Math.round(currentValue);
-                }, interval);
+    const numbers = document.querySelectorAll('.number');
+    numbers.forEach(number => {
+        const target = parseInt(number.getAttribute('data-target'));
+        const duration = 2000; // 2 seconds
+        const step = target / (duration / 16); // 60fps
+        let current = 0;
+        
+        const updateNumber = () => {
+            current += step;
+            if (current < target) {
+                number.textContent = Math.floor(current);
+                requestAnimationFrame(updateNumber);
+            } else {
+                number.textContent = target;
             }
-        });
-    }, {
-        threshold: 0.5, // Trigger when 50% of the element is visible
-        rootMargin: '0px' // No margin
-    });
-
-    // Observe all number elements
-    numberElements.forEach(element => {
-        observer.observe(element);
+        };
+        
+        updateNumber();
     });
 }
 
-// Call the function when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    animateNumbers();
-    // ... rest of your existing DOMContentLoaded code ...
+// Intersection Observer for number animation
+const numberObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateNumbers();
+            numberObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.number').forEach(number => {
+    numberObserver.observe(number);
+});
+
+// Dropdown functionality
+document.querySelectorAll('.dropdown').forEach(dropdown => {
+    const button = dropdown.querySelector('.dropdown-button');
+    const content = dropdown.querySelector('.dropdown-content');
+    
+    button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    });
+});
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-content').forEach(content => {
+            content.style.display = 'none';
+        });
+    }
 });
 
 // ClickUp API Integration
