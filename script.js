@@ -130,31 +130,29 @@ document.getElementById('backToTop').addEventListener('click', function() {
 // Initialize everything when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Number animation
-    function animateNumbers() {
+    function animateValue(element, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const value = Math.floor(progress * (end - start) + start);
+            element.textContent = value;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            } else {
+                element.textContent = end;
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    function startNumberAnimation() {
         const numbers = document.querySelectorAll('.number');
-        
         numbers.forEach(number => {
             const target = parseInt(number.getAttribute('data-target'));
-            if (isNaN(target)) {
-                console.error('Invalid target value for number:', number);
-                return;
+            if (!isNaN(target)) {
+                animateValue(number, 0, target, 2000);
             }
-            
-            let current = 0;
-            const duration = 2000; // 2 seconds
-            const steps = 50;
-            const increment = target / steps;
-            const stepTime = duration / steps;
-            
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    number.textContent = target;
-                    clearInterval(timer);
-                } else {
-                    number.textContent = Math.floor(current);
-                }
-            }, stepTime);
         });
     }
 
@@ -162,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const numberObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                animateNumbers();
+                startNumberAnimation();
                 numberObserver.unobserve(entry.target);
             }
         });
