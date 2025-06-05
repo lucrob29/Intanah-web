@@ -133,20 +133,31 @@ document.addEventListener('DOMContentLoaded', function() {
     function animateNumbers() {
         const numbers = document.querySelectorAll('.number');
         numbers.forEach(number => {
+            // Get the target value and ensure it's a number
             const target = parseInt(number.getAttribute('data-target'));
-            if (isNaN(target)) return;
+            if (isNaN(target)) {
+                console.error('Invalid target value for number:', number);
+                return;
+            }
             
-            const duration = 2000;
-            const step = target / (duration / 16);
+            // Reset the number to 0
+            number.textContent = '0';
+            
+            const duration = 2000; // 2 seconds
+            const steps = 60; // 60fps
+            const stepValue = target / steps;
             let current = 0;
+            let step = 0;
             
             const updateNumber = () => {
-                current += step;
-                if (current < target) {
-                    number.textContent = Math.floor(current);
+                step++;
+                current = Math.min(step * stepValue, target);
+                number.textContent = Math.floor(current);
+                
+                if (step < steps) {
                     requestAnimationFrame(updateNumber);
                 } else {
-                    number.textContent = target;
+                    number.textContent = target; // Ensure we end at the exact target
                 }
             };
             
