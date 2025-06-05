@@ -450,9 +450,9 @@ footer {
 .break-text {
     max-width: 800px;
     margin: 2rem auto;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: rgba(51, 51, 51, 0.8);
+    font-size: 1.3rem;
+    line-height: 1.8;
+    color: #000000;
     padding: 0 1rem;
     text-align: center;
     font-weight: 400;
