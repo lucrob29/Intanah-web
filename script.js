@@ -116,10 +116,8 @@ window.addEventListener('scroll', () => {
 });
 
 document.getElementById('backToTop').addEventListener('click', function() {
-    const scrollHeight = document.documentElement.scrollHeight;
-    const scrollTo = scrollHeight / 2;
     window.scrollTo({
-        top: scrollTo,
+        top: 0,
         behavior: 'smooth'
     });
 });
