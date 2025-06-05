@@ -132,36 +132,28 @@ document.addEventListener('DOMContentLoaded', function() {
     // Number animation
     function animateNumbers() {
         const numbers = document.querySelectorAll('.number');
+        
         numbers.forEach(number => {
-            // Get the target value and ensure it's a number
             const target = parseInt(number.getAttribute('data-target'));
             if (isNaN(target)) {
                 console.error('Invalid target value for number:', number);
                 return;
             }
             
-            // Reset the number to 0
-            number.textContent = '0';
-            
-            const duration = 2000; // 2 seconds
-            const steps = 60; // 60fps
-            const stepValue = target / steps;
             let current = 0;
-            let step = 0;
+            const increment = target / 50; // 50 steps
+            const duration = 2000; // 2 seconds
+            const interval = duration / 50;
             
-            const updateNumber = () => {
-                step++;
-                current = Math.min(step * stepValue, target);
-                number.textContent = Math.floor(current);
-                
-                if (step < steps) {
-                    requestAnimationFrame(updateNumber);
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    number.textContent = target;
+                    clearInterval(timer);
                 } else {
-                    number.textContent = target; // Ensure we end at the exact target
+                    number.textContent = Math.floor(current);
                 }
-            };
-            
-            updateNumber();
+            }, interval);
         });
     }
 
