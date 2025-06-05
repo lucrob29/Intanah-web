@@ -127,67 +127,70 @@ document.getElementById('backToTop').addEventListener('click', function() {
     });
 });
 
-// Number animation
-function animateNumbers() {
-    const numbers = document.querySelectorAll('.number');
-    numbers.forEach(number => {
-        const target = parseInt(number.getAttribute('data-target'));
-        if (isNaN(target)) return; // Skip if target is not a valid number
-        
-        const duration = 2000; // 2 seconds
-        const step = target / (duration / 16); // 60fps
-        let current = 0;
-        
-        const updateNumber = () => {
-            current += step;
-            if (current < target) {
-                number.textContent = Math.floor(current);
-                requestAnimationFrame(updateNumber);
-            } else {
-                number.textContent = target;
-            }
-        };
-        
-        updateNumber();
-    });
-}
+// Initialize everything when the DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Number animation
+    function animateNumbers() {
+        const numbers = document.querySelectorAll('.number');
+        numbers.forEach(number => {
+            const target = parseInt(number.getAttribute('data-target'));
+            if (isNaN(target)) return;
+            
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+            
+            const updateNumber = () => {
+                current += step;
+                if (current < target) {
+                    number.textContent = Math.floor(current);
+                    requestAnimationFrame(updateNumber);
+                } else {
+                    number.textContent = target;
+                }
+            };
+            
+            updateNumber();
+        });
+    }
 
-// Intersection Observer for number animation
-const numberObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            animateNumbers();
-            numberObserver.unobserve(entry.target);
+    // Intersection Observer for number animation
+    const numberObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateNumbers();
+                numberObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    // Observe all number elements
+    document.querySelectorAll('.number').forEach(number => {
+        numberObserver.observe(number);
+    });
+
+    // Dropdown functionality
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        const button = dropdown.querySelector('.dropdown-button');
+        const content = dropdown.querySelector('.dropdown-content');
+        
+        if (button && content) {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                content.style.display = content.style.display === 'block' ? 'none' : 'block';
+            });
         }
     });
-}, { threshold: 0.5 });
 
-// Observe all number elements
-document.querySelectorAll('.number').forEach(number => {
-    numberObserver.observe(number);
-});
-
-// Dropdown functionality
-document.querySelectorAll('.dropdown').forEach(dropdown => {
-    const button = dropdown.querySelector('.dropdown-button');
-    const content = dropdown.querySelector('.dropdown-content');
-    
-    if (button && content) {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            content.style.display = content.style.display === 'block' ? 'none' : 'block';
-        });
-    }
-});
-
-// Close dropdowns when clicking outside
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('.dropdown')) {
-        document.querySelectorAll('.dropdown-content').forEach(content => {
-            content.style.display = 'none';
-        });
-    }
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                content.style.display = 'none';
+            });
+        }
+    });
 });
 
 // ClickUp API Integration
