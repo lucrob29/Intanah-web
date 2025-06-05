@@ -134,26 +134,39 @@ document.addEventListener('DOMContentLoaded', function() {
         const numbers = document.querySelectorAll('.number');
         
         numbers.forEach(number => {
-            const target = parseInt(number.getAttribute('data-target'));
-            if (isNaN(target)) {
-                console.error('Invalid target value for number:', number);
+            // Get the target value
+            const target = number.getAttribute('data-target');
+            if (!target) {
+                console.error('No target value found for number:', number);
                 return;
             }
             
-            let current = 0;
-            const increment = target / 50; // 50 steps
-            const duration = 2000; // 2 seconds
-            const interval = duration / 50;
+            // Convert to number and validate
+            const targetNum = Number(target);
+            if (isNaN(targetNum)) {
+                console.error('Invalid target value:', target);
+                return;
+            }
             
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    number.textContent = target;
-                    clearInterval(timer);
+            // Reset to 0
+            number.textContent = '0';
+            
+            // Simple counter
+            let count = 0;
+            const duration = 2000; // 2 seconds
+            const steps = 50;
+            const stepTime = duration / steps;
+            const increment = targetNum / steps;
+            
+            const counter = setInterval(() => {
+                count += increment;
+                if (count >= targetNum) {
+                    number.textContent = targetNum;
+                    clearInterval(counter);
                 } else {
-                    number.textContent = Math.floor(current);
+                    number.textContent = Math.floor(count);
                 }
-            }, interval);
+            }, stepTime);
         });
     }
 
